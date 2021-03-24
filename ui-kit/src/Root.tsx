@@ -15,10 +15,10 @@ export const Root = () => {
   return (
     <ErrorHandler>
       <SafeAreaProvider>
-    <ThemeProvider>
-      <Router />
-    </ThemeProvider>
-    </SafeAreaProvider>
+        <ThemeProvider>
+          <Router />
+        </ThemeProvider>
+      </SafeAreaProvider>
     </ErrorHandler>
   );
 };

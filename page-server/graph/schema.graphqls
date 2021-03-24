@@ -1,0 +1,31 @@
+type Page {
+  id: PageType!
+  components: [Component!]!
+}
+
+enum PageType {
+  PAGE1
+  PAGE2
+}
+
+enum ComponentType {
+  TEXT
+  HEADING
+}
+
+type Component {
+  type: ComponentType!
+}
+
+type Query {
+  pageById(id: PageType!) : Page
+}
+
+input NewPage {
+  id: PageType!
+  components: [ComponentType!]!
+}
+
+type Mutation {
+  createPage(input: NewPage!) : Page!
+}
