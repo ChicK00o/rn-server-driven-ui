@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/nautilus/gateway"
 	"github.com/nautilus/graphql"
@@ -20,13 +19,13 @@ func main() {
 		panic(err)
 	}
 
-	// create queryer that can batch requests whenever we query a service
-	factory := gateway.QueryerFactory(func(ctx *gateway.PlanningContext, url string) graphql.Queryer {
-		return graphql.NewMultiOpQueryer(url, 10*time.Millisecond, 1000)
-	})
+	// // create queryer that can batch requests whenever we query a service
+	// factory := gateway.QueryerFactory(func(ctx *gateway.PlanningContext, url string) graphql.Queryer {
+	// 	return graphql.NewMultiOpQueryer(url, 10*time.Millisecond, 1000)
+	// })
 
 	// create the gateway instance
-	gw, err := gateway.New(schemas, gateway.WithQueryerFactory(&factory))
+	gw, err := gateway.New(schemas) //, gateway.WithQueryerFactory(&factory))
 	if err != nil {
 		panic(err)
 	}

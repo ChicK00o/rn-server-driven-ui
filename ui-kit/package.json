@@ -35,7 +35,8 @@
     "test:coverage": "jest --verbose --coverage && open ./.coverage/lcov-report/index.html",
     "generate:icon": "npx app-icon generate -i public/assets/icon.png",
     "generate:bootsplash": "yarn react-native generate-bootsplash public/assets/icon.png --background-color=FFFFFF --logo-width=100 --assets-path=public/assets",
-    "util:icons": "chrome https://akveo.github.io/eva-icons/#/"
+    "util:icons": "chrome https://akveo.github.io/eva-icons/#/",
+    "update:gql": "apollo schema:download --endpoint=http://localhost:3000/graphql graphql-schema.json && apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --includes='src/gql/**.gql.ts' --tagName=gql --addTypename  types"
   },
   "husky": {
     "hooks": {
@@ -44,10 +45,12 @@
     }
   },
   "dependencies": {
+    "@apollo/client": "^3.3.12",
     "@react-native-community/async-storage": "^1.12.0",
     "@react-navigation/bottom-tabs": "^5.11.2",
     "@react-navigation/native": "^5.8.10",
     "@react-navigation/stack": "^5.12.8",
+    "graphql": "^15.5.0",
     "i18next": "^19.8.4",
     "i18next-react-native-async-storage": "^1.0.4",
     "react": "17.0.1",
