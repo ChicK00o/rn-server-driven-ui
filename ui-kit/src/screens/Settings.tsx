@@ -3,8 +3,9 @@ import React from 'react';
 import { Button, Platform, View, Text, StyleSheet } from 'react-native';
 import { useThemeSystem } from 'src/contexts/ThemeContext';
 import { GET_PAGE } from 'src/gql/page.gql';
-import { GetPage } from 'src/gql/types/GetPage';
+import { GetPageById, GetPageByIdVariables } from 'src/gql/types/GetPageById';
 import { useI18n } from 'src/i18n/hooks';
+import { PageType } from 'src/gql/types/globalTypes';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +29,9 @@ const styles = StyleSheet.create({
 export const Settings = () => {
   const { t, changeLanguage } = useI18n();
   const { theme, toggleTheme } = useThemeSystem();
-  const { data, loading, error } = useQuery<GetPage>(GET_PAGE);
+  const { data, loading, error } = useQuery<GetPageById, GetPageByIdVariables>(GET_PAGE, {
+    variables: { id: PageType.PAGE2 },
+  });
 
   const platform = Platform.select({
     ios: t('home.text.platform.ios'),

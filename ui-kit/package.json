@@ -36,7 +36,7 @@
     "generate:icon": "npx app-icon generate -i public/assets/icon.png",
     "generate:bootsplash": "yarn react-native generate-bootsplash public/assets/icon.png --background-color=FFFFFF --logo-width=100 --assets-path=public/assets",
     "util:icons": "chrome https://akveo.github.io/eva-icons/#/",
-    "update:gql": "apollo schema:download --endpoint=http://localhost:3000/graphql graphql-schema.json && apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --includes='src/gql/**.gql.ts' --tagName=gql --addTypename  types"
+    "update:gql": "apollo schema:download --endpoint=http://localhost:3000/graphql graphql-schema.json && apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --includes='src/gql/**.gql.ts' --tagName=gql --outputFlat --addTypename 'src/gql/types/'"
   },
   "husky": {
     "hooks": {
