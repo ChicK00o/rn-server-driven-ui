@@ -11,7 +11,7 @@ import (
 	"github.com/ChicK00o/rn-server-driven-ui/page-server/graph/generated"
 )
 
-const defaultPort = "3001"
+const defaultPort = "3000"
 
 func main() {
 	port := os.Getenv("PORT")
