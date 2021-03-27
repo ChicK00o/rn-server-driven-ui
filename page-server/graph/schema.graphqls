@@ -1,31 +1,120 @@
-type Page {
-  id: PageType!
-  components: [Component!]!
+interface Properties {
+  query: String!
+}
+interface Component {
+  type: String!
+  children: [Component!]!
+  properties: Properties!
 }
 
-enum PageType {
-  PAGE1
-  PAGE2
+type PageProperties implements Properties {
+  name: String!
+  query: String!
+}
+type Page implements Component {
+  type: String!
+  children: [Component!]!
+  properties: PageProperties!
 }
 
-enum ComponentType {
-  TEXT
-  HEADING
+enum Alignment {
+  Vertical,
+  Horizontal
+}
+type CardProperties implements Properties {
+  alignment: Alignment!
+  query: String!
+}
+type Card implements Component {
+  type: String!
+  children: [Component!]!
+  properties: CardProperties!
 }
 
-type Component {
-  type: ComponentType!
+type TextProperties implements Properties {
+  query: String!
+  header: String
+  subheader: String
+  collapsible: Boolean
+}
+type Text implements Component {
+  type: String!
+  children: [Component!]!
+  properties: TextProperties!
 }
 
-type Query {
-  pageById(id: PageType!) : Page
+type TickerProperties implements Properties {
+  query: String!
+  label: String
+  text: String
+  frequency: Int!
+}
+type Ticker implements Component {
+  type: String!
+  children: [Component!]!
+  properties: TickerProperties!
 }
 
-input NewPage {
-  id: PageType!
-  components: [ComponentType!]!
+type TableProperties implements Properties {
+  query: String!
+}
+type Table implements Component {
+  type: String!
+  children: [Component!]!
+  properties: TableProperties!
 }
 
-type Mutation {
-  createPage(input: NewPage!) : Page!
+type ButtonProperties implements Properties {
+  query: String!
+  text: String!
+  label: String
+}
+type Button implements Component {
+  type: String!
+  children: [Component!]!
+  properties: ButtonProperties!
+}
+
+type FormProperties implements Properties {
+  query: String!
+}
+type Form implements Component {
+  type: String!
+  children: [Component!]!
+  properties: FormProperties
+}
+
+enum InputType {
+  Text,
+  Number
+}
+
+type FormInputProperties implements Properties {
+  query: String!
+  type: InputType!
+}
+type FormInput implements Component {
+  type: String!
+  children: [Component!]!
+  properties: FormInputProperties!
+}
+
+type FormDropDownProperties implements Properties {
+  query: String!
+  options: [String!]!
+}
+type FormDropDown implements Component {
+  type: String!
+  children: [Component!]!
+  properties: FormDropDownProperties!
+}
+
+type FormSubmitProperties implements Properties {
+  query: String!
+  label: String!
+}
+type FormSubmit implements Component {
+  type: String!
+  children: [Component!]!
+  properties: FormSubmitProperties!
 }

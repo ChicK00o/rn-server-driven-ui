@@ -42,8 +42,9 @@ not using graphql subscriptions as the current federation model of graphql used 
   - button text
   - data label
 - form widget
-  - text input
-  - number input
-  - drop down selection
-  - submit button
-    - button text
+- input
+  - text
+  - number
+- form drop down selection
+- form submit button
+  - button text
