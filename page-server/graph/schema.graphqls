@@ -1,87 +1,39 @@
-interface Properties {
-  query: String!
-}
-interface Component {
+type Component {
   type: String!
   children: [Component!]!
   properties: Properties!
+  query: String
 }
 
-type PageProperties implements Properties {
+union Properties = PageProperties | CardProperties | TextProperties | TickerProperties | ButtonProperties | FormInputProperties | FormDropDownProperties | FormSubmitProperties | FormProperties | TableProperties
+
+type PageProperties {
   name: String!
-  query: String!
-}
-type Page implements Component {
-  type: String!
-  children: [Component!]!
-  properties: PageProperties!
 }
 
 enum Alignment {
   Vertical,
   Horizontal
 }
-type CardProperties implements Properties {
-  alignment: Alignment!
-  query: String!
-}
-type Card implements Component {
-  type: String!
-  children: [Component!]!
-  properties: CardProperties!
+type CardProperties {
+  cardAlignment: Alignment!
 }
 
-type TextProperties implements Properties {
-  query: String!
-  header: String
-  subheader: String
+type TextProperties {
+  textHeader: String
+  textSubheader: String
   collapsible: Boolean
 }
-type Text implements Component {
-  type: String!
-  children: [Component!]!
-  properties: TextProperties!
-}
 
-type TickerProperties implements Properties {
-  query: String!
-  label: String
-  text: String
+type TickerProperties {
+  tickerLabel: String
+  tickerText: String
   frequency: Int!
 }
-type Ticker implements Component {
-  type: String!
-  children: [Component!]!
-  properties: TickerProperties!
-}
 
-type TableProperties implements Properties {
-  query: String!
-}
-type Table implements Component {
-  type: String!
-  children: [Component!]!
-  properties: TableProperties!
-}
-
-type ButtonProperties implements Properties {
-  query: String!
-  text: String!
-  label: String
-}
-type Button implements Component {
-  type: String!
-  children: [Component!]!
-  properties: ButtonProperties!
-}
-
-type FormProperties implements Properties {
-  query: String!
-}
-type Form implements Component {
-  type: String!
-  children: [Component!]!
-  properties: FormProperties
+type ButtonProperties {
+  buttonText: String!
+  buttonLabel: String
 }
 
 enum InputType {
@@ -89,32 +41,26 @@ enum InputType {
   Number
 }
 
-type FormInputProperties implements Properties {
-  query: String!
-  type: InputType!
-}
-type FormInput implements Component {
-  type: String!
-  children: [Component!]!
-  properties: FormInputProperties!
+type FormInputProperties {
+  inputType: InputType!
 }
 
-type FormDropDownProperties implements Properties {
-  query: String!
+type FormDropDownProperties {
   options: [String!]!
 }
-type FormDropDown implements Component {
-  type: String!
-  children: [Component!]!
-  properties: FormDropDownProperties!
+
+type FormSubmitProperties {
+  submitLabel: String!
 }
 
-type FormSubmitProperties implements Properties {
-  query: String!
-  label: String!
+type TableProperties {
+  tableName: String
 }
-type FormSubmit implements Component {
-  type: String!
-  children: [Component!]!
-  properties: FormSubmitProperties!
+
+type FormProperties {
+  formName: String
+}
+
+type Query {
+  getPage(pageName: String): Component
 }

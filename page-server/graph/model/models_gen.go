@@ -8,98 +8,160 @@ import (
 	"strconv"
 )
 
+type Properties interface {
+	IsProperties()
+}
+
+type ButtonProperties struct {
+	ButtonText  string  `json:"buttonText"`
+	ButtonLabel *string `json:"buttonLabel"`
+}
+
+func (ButtonProperties) IsProperties() {}
+
+type CardProperties struct {
+	CardAlignment Alignment `json:"cardAlignment"`
+}
+
+func (CardProperties) IsProperties() {}
+
 type Component struct {
-	Type ComponentType `json:"type"`
+	Type       string       `json:"type"`
+	Children   []*Component `json:"children"`
+	Properties Properties   `json:"properties"`
+	Query      *string      `json:"query"`
 }
 
-type NewPage struct {
-	ID         PageType        `json:"id"`
-	Components []ComponentType `json:"components"`
+type FormDropDownProperties struct {
+	Options []string `json:"options"`
 }
 
-type Page struct {
-	ID         PageType     `json:"id"`
-	Components []*Component `json:"components"`
+func (FormDropDownProperties) IsProperties() {}
+
+type FormInputProperties struct {
+	InputType InputType `json:"inputType"`
 }
 
-type ComponentType string
+func (FormInputProperties) IsProperties() {}
+
+type FormProperties struct {
+	FormName *string `json:"formName"`
+}
+
+func (FormProperties) IsProperties() {}
+
+type FormSubmitProperties struct {
+	SubmitLabel string `json:"submitLabel"`
+}
+
+func (FormSubmitProperties) IsProperties() {}
+
+type PageProperties struct {
+	Name string `json:"name"`
+}
+
+func (PageProperties) IsProperties() {}
+
+type TableProperties struct {
+	TableName *string `json:"tableName"`
+}
+
+func (TableProperties) IsProperties() {}
+
+type TextProperties struct {
+	TextHeader    *string `json:"textHeader"`
+	TextSubheader *string `json:"textSubheader"`
+	Collapsible   *bool   `json:"collapsible"`
+}
+
+func (TextProperties) IsProperties() {}
+
+type TickerProperties struct {
+	TickerLabel *string `json:"tickerLabel"`
+	TickerText  *string `json:"tickerText"`
+	Frequency   int     `json:"frequency"`
+}
+
+func (TickerProperties) IsProperties() {}
+
+type Alignment string
 
 const (
-	ComponentTypeText    ComponentType = "TEXT"
-	ComponentTypeHeading ComponentType = "HEADING"
+	AlignmentVertical   Alignment = "Vertical"
+	AlignmentHorizontal Alignment = "Horizontal"
 )
 
-var AllComponentType = []ComponentType{
-	ComponentTypeText,
-	ComponentTypeHeading,
+var AllAlignment = []Alignment{
+	AlignmentVertical,
+	AlignmentHorizontal,
 }
 
-func (e ComponentType) IsValid() bool {
+func (e Alignment) IsValid() bool {
 	switch e {
-	case ComponentTypeText, ComponentTypeHeading:
+	case AlignmentVertical, AlignmentHorizontal:
 		return true
 	}
 	return false
 }
 
-func (e ComponentType) String() string {
+func (e Alignment) String() string {
 	return string(e)
 }
 
-func (e *ComponentType) UnmarshalGQL(v interface{}) error {
+func (e *Alignment) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = ComponentType(str)
+	*e = Alignment(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ComponentType", str)
+		return fmt.Errorf("%s is not a valid Alignment", str)
 	}
 	return nil
 }
 
-func (e ComponentType) MarshalGQL(w io.Writer) {
+func (e Alignment) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type PageType string
+type InputType string
 
 const (
-	PageTypePage1 PageType = "PAGE1"
-	PageTypePage2 PageType = "PAGE2"
+	InputTypeText   InputType = "Text"
+	InputTypeNumber InputType = "Number"
 )
 
-var AllPageType = []PageType{
-	PageTypePage1,
-	PageTypePage2,
+var AllInputType = []InputType{
+	InputTypeText,
+	InputTypeNumber,
 }
 
-func (e PageType) IsValid() bool {
+func (e InputType) IsValid() bool {
 	switch e {
-	case PageTypePage1, PageTypePage2:
+	case InputTypeText, InputTypeNumber:
 		return true
 	}
 	return false
 }
 
-func (e PageType) String() string {
+func (e InputType) String() string {
 	return string(e)
 }
 
-func (e *PageType) UnmarshalGQL(v interface{}) error {
+func (e *InputType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = PageType(str)
+	*e = InputType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PageType", str)
+		return fmt.Errorf("%s is not a valid InputType", str)
 	}
 	return nil
 }
 
-func (e PageType) MarshalGQL(w io.Writer) {
+func (e InputType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

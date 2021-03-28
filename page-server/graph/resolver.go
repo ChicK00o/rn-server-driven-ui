@@ -9,5 +9,5 @@ import "github.com/ChicK00o/rn-server-driven-ui/page-server/graph/model"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	pages []*model.Page
+	Pages []*model.Component
 }

@@ -7,14 +7,14 @@
 // START Enums and Input Objects
 //==============================================================
 
-export enum ComponentType {
-  HEADING = "HEADING",
-  TEXT = "TEXT",
+export enum Alignment {
+  Horizontal = "Horizontal",
+  Vertical = "Vertical",
 }
 
-export enum PageType {
-  PAGE1 = "PAGE1",
-  PAGE2 = "PAGE2",
+export enum InputType {
+  Number = "Number",
+  Text = "Text",
 }
 
 //==============================================================

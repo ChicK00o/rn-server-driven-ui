@@ -1,0 +1,108 @@
+{
+  "type": "page",
+  "properties": {
+    "name": "test-page"
+  },
+  "children": [
+    {
+      "type": "card",
+      "properties": {
+        "cardAlignment": "vertical"
+      },
+      "children": [
+        {
+          "type": "card",
+          "properties": {
+            "cardAlignment": "horizontal"
+          },
+          "children": [
+            {
+              "type": "text",
+              "properties": {
+                "textHeader": "header",
+                "textSubheader": "extra text",
+                "collapsible": true
+              },
+              "children": []
+            },
+            {
+              "type": "ticker",
+              "properties": {
+                "tickerLabel": "ticker-name",
+                "tickerText": "0",
+                "frequency": 1000
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "properties": {
+            "tableName" : "table"
+          },
+          "children": []
+        },
+        {
+          "type": "button",
+          "properties": {
+            "buttonText": "delete",
+            "buttonLabel": "this is just data i want to showcase"
+          },
+          "children": []
+        },
+        {
+          "type": "button",
+          "properties": {
+            "buttonText": "delete",
+            "buttonLabel": "this is just data i want to showcase 2"
+          },
+          "children": []
+        },
+        {
+          "type": "form",
+          "properties": {
+            "formName" : "form"
+          },
+          "children": [
+            {
+              "type": "input",
+              "properties": {
+                "intputType": "text"
+              },
+              "children": []
+            },
+            {
+              "type": "input",
+              "properties": {
+                "inputType": "number"
+              },
+              "children": []
+            },
+            {
+              "type": "drop-down",
+              "properties": {
+                "options": ["1", "2", "3"]
+              },
+              "children": []
+            },
+            {
+              "type": "submit",
+              "properties": {
+                "submitLabel": "submit"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "properties": {
+            "buttonText": "delete the card"
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

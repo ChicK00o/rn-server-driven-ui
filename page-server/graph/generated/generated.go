@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"sync"
 
@@ -34,7 +35,6 @@ type Config struct {
 }
 
 type ResolverRoot interface {
-	Mutation() MutationResolver
 	Query() QueryResolver
 }
 
@@ -42,29 +42,65 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	ButtonProperties struct {
+		ButtonLabel func(childComplexity int) int
+		ButtonText  func(childComplexity int) int
+	}
+
+	CardProperties struct {
+		CardAlignment func(childComplexity int) int
+	}
+
 	Component struct {
-		Type func(childComplexity int) int
+		Children   func(childComplexity int) int
+		Properties func(childComplexity int) int
+		Query      func(childComplexity int) int
+		Type       func(childComplexity int) int
 	}
 
-	Mutation struct {
-		CreatePage func(childComplexity int, input model.NewPage) int
+	FormDropDownProperties struct {
+		Options func(childComplexity int) int
 	}
 
-	Page struct {
-		Components func(childComplexity int) int
-		ID         func(childComplexity int) int
+	FormInputProperties struct {
+		InputType func(childComplexity int) int
+	}
+
+	FormProperties struct {
+		FormName func(childComplexity int) int
+	}
+
+	FormSubmitProperties struct {
+		SubmitLabel func(childComplexity int) int
+	}
+
+	PageProperties struct {
+		Name func(childComplexity int) int
 	}
 
 	Query struct {
-		PageByID func(childComplexity int, id model.PageType) int
+		GetPage func(childComplexity int, pageName *string) int
+	}
+
+	TableProperties struct {
+		TableName func(childComplexity int) int
+	}
+
+	TextProperties struct {
+		Collapsible   func(childComplexity int) int
+		TextHeader    func(childComplexity int) int
+		TextSubheader func(childComplexity int) int
+	}
+
+	TickerProperties struct {
+		Frequency   func(childComplexity int) int
+		TickerLabel func(childComplexity int) int
+		TickerText  func(childComplexity int) int
 	}
 }
 
-type MutationResolver interface {
-	CreatePage(ctx context.Context, input model.NewPage) (*model.Page, error)
-}
 type QueryResolver interface {
-	PageByID(ctx context.Context, id model.PageType) (*model.Page, error)
+	GetPage(ctx context.Context, pageName *string) (*model.Component, error)
 }
 
 type executableSchema struct {
@@ -82,6 +118,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "ButtonProperties.buttonLabel":
+		if e.complexity.ButtonProperties.ButtonLabel == nil {
+			break
+		}
+
+		return e.complexity.ButtonProperties.ButtonLabel(childComplexity), true
+
+	case "ButtonProperties.buttonText":
+		if e.complexity.ButtonProperties.ButtonText == nil {
+			break
+		}
+
+		return e.complexity.ButtonProperties.ButtonText(childComplexity), true
+
+	case "CardProperties.cardAlignment":
+		if e.complexity.CardProperties.CardAlignment == nil {
+			break
+		}
+
+		return e.complexity.CardProperties.CardAlignment(childComplexity), true
+
+	case "Component.children":
+		if e.complexity.Component.Children == nil {
+			break
+		}
+
+		return e.complexity.Component.Children(childComplexity), true
+
+	case "Component.properties":
+		if e.complexity.Component.Properties == nil {
+			break
+		}
+
+		return e.complexity.Component.Properties(childComplexity), true
+
+	case "Component.query":
+		if e.complexity.Component.Query == nil {
+			break
+		}
+
+		return e.complexity.Component.Query(childComplexity), true
+
 	case "Component.type":
 		if e.complexity.Component.Type == nil {
 			break
@@ -89,43 +167,101 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Component.Type(childComplexity), true
 
-	case "Mutation.createPage":
-		if e.complexity.Mutation.CreatePage == nil {
+	case "FormDropDownProperties.options":
+		if e.complexity.FormDropDownProperties.Options == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createPage_args(context.TODO(), rawArgs)
+		return e.complexity.FormDropDownProperties.Options(childComplexity), true
+
+	case "FormInputProperties.inputType":
+		if e.complexity.FormInputProperties.InputType == nil {
+			break
+		}
+
+		return e.complexity.FormInputProperties.InputType(childComplexity), true
+
+	case "FormProperties.formName":
+		if e.complexity.FormProperties.FormName == nil {
+			break
+		}
+
+		return e.complexity.FormProperties.FormName(childComplexity), true
+
+	case "FormSubmitProperties.submitLabel":
+		if e.complexity.FormSubmitProperties.SubmitLabel == nil {
+			break
+		}
+
+		return e.complexity.FormSubmitProperties.SubmitLabel(childComplexity), true
+
+	case "PageProperties.name":
+		if e.complexity.PageProperties.Name == nil {
+			break
+		}
+
+		return e.complexity.PageProperties.Name(childComplexity), true
+
+	case "Query.getPage":
+		if e.complexity.Query.GetPage == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPage_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePage(childComplexity, args["input"].(model.NewPage)), true
+		return e.complexity.Query.GetPage(childComplexity, args["pageName"].(*string)), true
 
-	case "Page.components":
-		if e.complexity.Page.Components == nil {
+	case "TableProperties.tableName":
+		if e.complexity.TableProperties.TableName == nil {
 			break
 		}
 
-		return e.complexity.Page.Components(childComplexity), true
+		return e.complexity.TableProperties.TableName(childComplexity), true
 
-	case "Page.id":
-		if e.complexity.Page.ID == nil {
+	case "TextProperties.collapsible":
+		if e.complexity.TextProperties.Collapsible == nil {
 			break
 		}
 
-		return e.complexity.Page.ID(childComplexity), true
+		return e.complexity.TextProperties.Collapsible(childComplexity), true
 
-	case "Query.pageById":
-		if e.complexity.Query.PageByID == nil {
+	case "TextProperties.textHeader":
+		if e.complexity.TextProperties.TextHeader == nil {
 			break
 		}
 
-		args, err := ec.field_Query_pageById_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
+		return e.complexity.TextProperties.TextHeader(childComplexity), true
+
+	case "TextProperties.textSubheader":
+		if e.complexity.TextProperties.TextSubheader == nil {
+			break
 		}
 
-		return e.complexity.Query.PageByID(childComplexity, args["id"].(model.PageType)), true
+		return e.complexity.TextProperties.TextSubheader(childComplexity), true
+
+	case "TickerProperties.frequency":
+		if e.complexity.TickerProperties.Frequency == nil {
+			break
+		}
+
+		return e.complexity.TickerProperties.Frequency(childComplexity), true
+
+	case "TickerProperties.tickerLabel":
+		if e.complexity.TickerProperties.TickerLabel == nil {
+			break
+		}
+
+		return e.complexity.TickerProperties.TickerLabel(childComplexity), true
+
+	case "TickerProperties.tickerText":
+		if e.complexity.TickerProperties.TickerText == nil {
+			break
+		}
+
+		return e.complexity.TickerProperties.TickerText(childComplexity), true
 
 	}
 	return 0, false
@@ -144,20 +280,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			}
 			first = false
 			data := ec._Query(ctx, rc.Operation.SelectionSet)
-			var buf bytes.Buffer
-			data.MarshalGQL(&buf)
-
-			return &graphql.Response{
-				Data: buf.Bytes(),
-			}
-		}
-	case ast.Mutation:
-		return func(ctx context.Context) *graphql.Response {
-			if !first {
-				return nil
-			}
-			first = false
-			data := ec._Mutation(ctx, rc.Operation.SelectionSet)
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 
@@ -191,68 +313,78 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/schema.graphqls", Input: `type Page {
-  id: PageType!
-  components: [Component!]!
+	{Name: "graph/schema.graphqls", Input: `type Component {
+  type: String!
+  children: [Component!]!
+  properties: Properties!
+  query: String
 }
 
-enum PageType {
-  PAGE1
-  PAGE2
+union Properties = PageProperties | CardProperties | TextProperties | TickerProperties | ButtonProperties | FormInputProperties | FormDropDownProperties | FormSubmitProperties | FormProperties | TableProperties
+
+type PageProperties {
+  name: String!
 }
 
-enum ComponentType {
-  TEXT
-  HEADING
+enum Alignment {
+  Vertical,
+  Horizontal
+}
+type CardProperties {
+  cardAlignment: Alignment!
 }
 
-type Component {
-  type: ComponentType!
+type TextProperties {
+  textHeader: String
+  textSubheader: String
+  collapsible: Boolean
+}
+
+type TickerProperties {
+  tickerLabel: String
+  tickerText: String
+  frequency: Int!
+}
+
+type ButtonProperties {
+  buttonText: String!
+  buttonLabel: String
+}
+
+enum InputType {
+  Text,
+  Number
+}
+
+type FormInputProperties {
+  inputType: InputType!
+}
+
+type FormDropDownProperties {
+  options: [String!]!
+}
+
+type FormSubmitProperties {
+  submitLabel: String!
+}
+
+type TableProperties {
+  tableName: String
+}
+
+type FormProperties {
+  formName: String
 }
 
 type Query {
-  pageById(id: PageType!) : Page
-}
-
-input NewPage {
-  id: PageType!
-  components: [ComponentType!]!
-}
-
-type Mutation {
-  createPage(input: NewPage!) : Page!
+  getPage(pageName: String): Component
 }`, BuiltIn: false},
-	{Name: "federation/directives.graphql", Input: `
-scalar _Any
-scalar _FieldSet
-
-directive @external on FIELD_DEFINITION
-directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
-directive @provides(fields: _FieldSet!) on FIELD_DEFINITION
-directive @key(fields: _FieldSet!) on OBJECT | INTERFACE
-directive @extends on OBJECT
-`, BuiltIn: true},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
-
-func (ec *executionContext) field_Mutation_createPage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.NewPage
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewPage2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐNewPage(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
 
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -269,18 +401,18 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_pageById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_getPage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.PageType
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNPageType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPageType(ctx, tmp)
+	var arg0 *string
+	if tmp, ok := rawArgs["pageName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageName"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["pageName"] = arg0
 	return args, nil
 }
 
@@ -322,6 +454,108 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _ButtonProperties_buttonText(ctx context.Context, field graphql.CollectedField, obj *model.ButtonProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ButtonProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ButtonText, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ButtonProperties_buttonLabel(ctx context.Context, field graphql.CollectedField, obj *model.ButtonProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ButtonProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ButtonLabel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CardProperties_cardAlignment(ctx context.Context, field graphql.CollectedField, obj *model.CardProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CardProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CardAlignment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Alignment)
+	fc.Result = res
+	return ec.marshalNAlignment2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐAlignment(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Component_type(ctx context.Context, field graphql.CollectedField, obj *model.Component) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -352,12 +586,12 @@ func (ec *executionContext) _Component_type(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.ComponentType)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNComponentType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentType(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_createPage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Component_children(ctx context.Context, field graphql.CollectedField, obj *model.Component) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -365,49 +599,7 @@ func (ec *executionContext) _Mutation_createPage(ctx context.Context, field grap
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createPage_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePage(rctx, args["input"].(model.NewPage))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Page)
-	fc.Result = res
-	return ec.marshalNPage2ᚖgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPage(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Page_id(ctx context.Context, field graphql.CollectedField, obj *model.Page) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Page",
+		Object:     "Component",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -417,42 +609,7 @@ func (ec *executionContext) _Page_id(ctx context.Context, field graphql.Collecte
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.PageType)
-	fc.Result = res
-	return ec.marshalNPageType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPageType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Page_components(ctx context.Context, field graphql.CollectedField, obj *model.Page) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Page",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Components, nil
+		return obj.Children, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -469,7 +626,246 @@ func (ec *executionContext) _Page_components(ctx context.Context, field graphql.
 	return ec.marshalNComponent2ᚕᚖgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_pageById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Component_properties(ctx context.Context, field graphql.CollectedField, obj *model.Component) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Component",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Properties, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Properties)
+	fc.Result = res
+	return ec.marshalNProperties2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐProperties(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Component_query(ctx context.Context, field graphql.CollectedField, obj *model.Component) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Component",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Query, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormDropDownProperties_options(ctx context.Context, field graphql.CollectedField, obj *model.FormDropDownProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormDropDownProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Options, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormInputProperties_inputType(ctx context.Context, field graphql.CollectedField, obj *model.FormInputProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormInputProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InputType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.InputType)
+	fc.Result = res
+	return ec.marshalNInputType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐInputType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormProperties_formName(ctx context.Context, field graphql.CollectedField, obj *model.FormProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FormName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FormSubmitProperties_submitLabel(ctx context.Context, field graphql.CollectedField, obj *model.FormSubmitProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FormSubmitProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SubmitLabel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PageProperties_name(ctx context.Context, field graphql.CollectedField, obj *model.PageProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PageProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -486,7 +882,7 @@ func (ec *executionContext) _Query_pageById(ctx context.Context, field graphql.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_pageById_args(ctx, rawArgs)
+	args, err := ec.field_Query_getPage_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -494,7 +890,7 @@ func (ec *executionContext) _Query_pageById(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PageByID(rctx, args["id"].(model.PageType))
+		return ec.resolvers.Query().GetPage(rctx, args["pageName"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -503,9 +899,9 @@ func (ec *executionContext) _Query_pageById(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Page)
+	res := resTmp.(*model.Component)
 	fc.Result = res
-	return ec.marshalOPage2ᚖgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPage(ctx, field.Selections, res)
+	return ec.marshalOComponent2ᚖgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponent(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -577,6 +973,233 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TableProperties_tableName(ctx context.Context, field graphql.CollectedField, obj *model.TableProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TableProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TableName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TextProperties_textHeader(ctx context.Context, field graphql.CollectedField, obj *model.TextProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TextProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TextHeader, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TextProperties_textSubheader(ctx context.Context, field graphql.CollectedField, obj *model.TextProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TextProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TextSubheader, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TextProperties_collapsible(ctx context.Context, field graphql.CollectedField, obj *model.TextProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TextProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Collapsible, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TickerProperties_tickerLabel(ctx context.Context, field graphql.CollectedField, obj *model.TickerProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TickerProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TickerLabel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TickerProperties_tickerText(ctx context.Context, field graphql.CollectedField, obj *model.TickerProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TickerProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TickerText, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TickerProperties_frequency(ctx context.Context, field graphql.CollectedField, obj *model.TickerProperties) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TickerProperties",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Frequency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -1666,41 +2289,148 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputNewPage(ctx context.Context, obj interface{}) (model.NewPage, error) {
-	var it model.NewPage
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNPageType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPageType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "components":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("components"))
-			it.Components, err = ec.unmarshalNComponentType2ᚕgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentTypeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
 
+func (ec *executionContext) _Properties(ctx context.Context, sel ast.SelectionSet, obj model.Properties) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.PageProperties:
+		return ec._PageProperties(ctx, sel, &obj)
+	case *model.PageProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._PageProperties(ctx, sel, obj)
+	case model.CardProperties:
+		return ec._CardProperties(ctx, sel, &obj)
+	case *model.CardProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._CardProperties(ctx, sel, obj)
+	case model.TextProperties:
+		return ec._TextProperties(ctx, sel, &obj)
+	case *model.TextProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TextProperties(ctx, sel, obj)
+	case model.TickerProperties:
+		return ec._TickerProperties(ctx, sel, &obj)
+	case *model.TickerProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TickerProperties(ctx, sel, obj)
+	case model.ButtonProperties:
+		return ec._ButtonProperties(ctx, sel, &obj)
+	case *model.ButtonProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ButtonProperties(ctx, sel, obj)
+	case model.FormInputProperties:
+		return ec._FormInputProperties(ctx, sel, &obj)
+	case *model.FormInputProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FormInputProperties(ctx, sel, obj)
+	case model.FormDropDownProperties:
+		return ec._FormDropDownProperties(ctx, sel, &obj)
+	case *model.FormDropDownProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FormDropDownProperties(ctx, sel, obj)
+	case model.FormSubmitProperties:
+		return ec._FormSubmitProperties(ctx, sel, &obj)
+	case *model.FormSubmitProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FormSubmitProperties(ctx, sel, obj)
+	case model.FormProperties:
+		return ec._FormProperties(ctx, sel, &obj)
+	case *model.FormProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FormProperties(ctx, sel, obj)
+	case model.TableProperties:
+		return ec._TableProperties(ctx, sel, &obj)
+	case *model.TableProperties:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TableProperties(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var buttonPropertiesImplementors = []string{"ButtonProperties", "Properties"}
+
+func (ec *executionContext) _ButtonProperties(ctx context.Context, sel ast.SelectionSet, obj *model.ButtonProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, buttonPropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ButtonProperties")
+		case "buttonText":
+			out.Values[i] = ec._ButtonProperties_buttonText(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "buttonLabel":
+			out.Values[i] = ec._ButtonProperties_buttonLabel(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var cardPropertiesImplementors = []string{"CardProperties", "Properties"}
+
+func (ec *executionContext) _CardProperties(ctx context.Context, sel ast.SelectionSet, obj *model.CardProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cardPropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CardProperties")
+		case "cardAlignment":
+			out.Values[i] = ec._CardProperties_cardAlignment(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var componentImplementors = []string{"Component"}
 
@@ -1718,6 +2448,18 @@ func (ec *executionContext) _Component(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "children":
+			out.Values[i] = ec._Component_children(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "properties":
+			out.Values[i] = ec._Component_properties(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "query":
+			out.Values[i] = ec._Component_query(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1729,23 +2471,19 @@ func (ec *executionContext) _Component(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
-var mutationImplementors = []string{"Mutation"}
+var formDropDownPropertiesImplementors = []string{"FormDropDownProperties", "Properties"}
 
-func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, mutationImplementors)
-
-	ctx = graphql.WithFieldContext(ctx, &graphql.FieldContext{
-		Object: "Mutation",
-	})
+func (ec *executionContext) _FormDropDownProperties(ctx context.Context, sel ast.SelectionSet, obj *model.FormDropDownProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, formDropDownPropertiesImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createPage":
-			out.Values[i] = ec._Mutation_createPage(ctx, field)
+			out.Values[i] = graphql.MarshalString("FormDropDownProperties")
+		case "options":
+			out.Values[i] = ec._FormDropDownProperties_options(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -1760,24 +2498,97 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
-var pageImplementors = []string{"Page"}
+var formInputPropertiesImplementors = []string{"FormInputProperties", "Properties"}
 
-func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj *model.Page) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, pageImplementors)
+func (ec *executionContext) _FormInputProperties(ctx context.Context, sel ast.SelectionSet, obj *model.FormInputProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, formInputPropertiesImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Page")
-		case "id":
-			out.Values[i] = ec._Page_id(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("FormInputProperties")
+		case "inputType":
+			out.Values[i] = ec._FormInputProperties_inputType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "components":
-			out.Values[i] = ec._Page_components(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var formPropertiesImplementors = []string{"FormProperties", "Properties"}
+
+func (ec *executionContext) _FormProperties(ctx context.Context, sel ast.SelectionSet, obj *model.FormProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, formPropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FormProperties")
+		case "formName":
+			out.Values[i] = ec._FormProperties_formName(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var formSubmitPropertiesImplementors = []string{"FormSubmitProperties", "Properties"}
+
+func (ec *executionContext) _FormSubmitProperties(ctx context.Context, sel ast.SelectionSet, obj *model.FormSubmitProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, formSubmitPropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FormSubmitProperties")
+		case "submitLabel":
+			out.Values[i] = ec._FormSubmitProperties_submitLabel(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var pagePropertiesImplementors = []string{"PageProperties", "Properties"}
+
+func (ec *executionContext) _PageProperties(ctx context.Context, sel ast.SelectionSet, obj *model.PageProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pagePropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PageProperties")
+		case "name":
+			out.Values[i] = ec._PageProperties_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -1807,7 +2618,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "pageById":
+		case "getPage":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -1815,13 +2626,96 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_pageById(ctx, field)
+				res = ec._Query_getPage(ctx, field)
 				return res
 			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var tablePropertiesImplementors = []string{"TableProperties", "Properties"}
+
+func (ec *executionContext) _TableProperties(ctx context.Context, sel ast.SelectionSet, obj *model.TableProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tablePropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TableProperties")
+		case "tableName":
+			out.Values[i] = ec._TableProperties_tableName(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var textPropertiesImplementors = []string{"TextProperties", "Properties"}
+
+func (ec *executionContext) _TextProperties(ctx context.Context, sel ast.SelectionSet, obj *model.TextProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, textPropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TextProperties")
+		case "textHeader":
+			out.Values[i] = ec._TextProperties_textHeader(ctx, field, obj)
+		case "textSubheader":
+			out.Values[i] = ec._TextProperties_textSubheader(ctx, field, obj)
+		case "collapsible":
+			out.Values[i] = ec._TextProperties_collapsible(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var tickerPropertiesImplementors = []string{"TickerProperties", "Properties"}
+
+func (ec *executionContext) _TickerProperties(ctx context.Context, sel ast.SelectionSet, obj *model.TickerProperties) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tickerPropertiesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TickerProperties")
+		case "tickerLabel":
+			out.Values[i] = ec._TickerProperties_tickerLabel(ctx, field, obj)
+		case "tickerText":
+			out.Values[i] = ec._TickerProperties_tickerText(ctx, field, obj)
+		case "frequency":
+			out.Values[i] = ec._TickerProperties_frequency(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2078,6 +2972,16 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) unmarshalNAlignment2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐAlignment(ctx context.Context, v interface{}) (model.Alignment, error) {
+	var res model.Alignment
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNAlignment2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐAlignment(ctx context.Context, sel ast.SelectionSet, v model.Alignment) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2140,101 +3044,39 @@ func (ec *executionContext) marshalNComponent2ᚖgithubᚗcomᚋChicK00oᚋrnᚑ
 	return ec._Component(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNComponentType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentType(ctx context.Context, v interface{}) (model.ComponentType, error) {
-	var res model.ComponentType
+func (ec *executionContext) unmarshalNInputType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐInputType(ctx context.Context, v interface{}) (model.InputType, error) {
+	var res model.InputType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNComponentType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentType(ctx context.Context, sel ast.SelectionSet, v model.ComponentType) graphql.Marshaler {
+func (ec *executionContext) marshalNInputType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐInputType(ctx context.Context, sel ast.SelectionSet, v model.InputType) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNComponentType2ᚕgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentTypeᚄ(ctx context.Context, v interface{}) ([]model.ComponentType, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]model.ComponentType, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNComponentType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentType(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNComponentType2ᚕgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.ComponentType) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNComponentType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponentType(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) unmarshalNNewPage2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐNewPage(ctx context.Context, v interface{}) (model.NewPage, error) {
-	res, err := ec.unmarshalInputNewPage(ctx, v)
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNPage2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPage(ctx context.Context, sel ast.SelectionSet, v model.Page) graphql.Marshaler {
-	return ec._Page(ctx, sel, &v)
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
-func (ec *executionContext) marshalNPage2ᚖgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPage(ctx context.Context, sel ast.SelectionSet, v *model.Page) graphql.Marshaler {
+func (ec *executionContext) marshalNProperties2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐProperties(ctx context.Context, sel ast.SelectionSet, v model.Properties) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._Page(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNPageType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPageType(ctx context.Context, v interface{}) (model.PageType, error) {
-	var res model.PageType
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNPageType2githubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPageType(ctx context.Context, sel ast.SelectionSet, v model.PageType) graphql.Marshaler {
-	return v
+	return ec._Properties(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -2252,19 +3094,34 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalN_FieldSet2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalString(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalN_FieldSet2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalString(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
 		}
 	}
-	return res
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -2520,11 +3377,11 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) marshalOPage2ᚖgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐPage(ctx context.Context, sel ast.SelectionSet, v *model.Page) graphql.Marshaler {
+func (ec *executionContext) marshalOComponent2ᚖgithubᚗcomᚋChicK00oᚋrnᚑserverᚑdrivenᚑuiᚋpageᚑserverᚋgraphᚋmodelᚐComponent(ctx context.Context, sel ast.SelectionSet, v *model.Component) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Page(ctx, sel, v)
+	return ec._Component(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

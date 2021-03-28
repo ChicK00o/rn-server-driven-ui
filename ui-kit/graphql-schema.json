@@ -3,9 +3,7 @@
     "queryType": {
       "name": "Query"
     },
-    "mutationType": {
-      "name": "Mutation"
-    },
+    "mutationType": null,
     "subscriptionType": null,
     "types": [
       {
@@ -14,54 +12,23 @@
         "description": "",
         "fields": [
           {
-            "name": "pageById",
+            "name": "getPage",
             "description": "",
             "args": [
               {
-                "name": "id",
+                "name": "pageName",
                 "description": "",
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "PageType",
-                    "ofType": null
-                  }
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Page",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "node",
-            "description": "",
-            "args": [
-              {
-                "name": "id",
-                "description": "",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "INTERFACE",
-              "name": "Node",
+              "name": "Component",
               "ofType": null
             },
             "isDeprecated": false,
@@ -74,43 +41,30 @@
         "possibleTypes": null
       },
       {
-        "kind": "ENUM",
-        "name": "PageType",
-        "description": "",
+        "kind": "SCALAR",
+        "name": "String",
+        "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
-        "enumValues": [
-          {
-            "name": "PAGE1",
-            "description": "",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PAGE2",
-            "description": "",
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
+        "enumValues": null,
         "possibleTypes": null
       },
       {
         "kind": "OBJECT",
-        "name": "Page",
+        "name": "Component",
         "description": "",
         "fields": [
           {
-            "name": "id",
+            "name": "type",
             "description": "",
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "ENUM",
-                "name": "PageType",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -118,7 +72,7 @@
             "deprecationReason": null
           },
           {
-            "name": "components",
+            "name": "children",
             "description": "",
             "args": [],
             "type": {
@@ -140,6 +94,122 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "properties",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "UNION",
+                "name": "Properties",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "query",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "UNION",
+        "name": "Properties",
+        "description": "",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "PageProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "CardProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "TextProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "TickerProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "ButtonProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FormInputProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FormDropDownProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FormSubmitProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "FormProperties",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "TableProperties",
+            "ofType": null
+          }
+        ]
+      },
+      {
+        "kind": "OBJECT",
+        "name": "PageProperties",
+        "description": "",
+        "fields": [
+          {
+            "name": "name",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -149,11 +219,11 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Component",
+        "name": "CardProperties",
         "description": "",
         "fields": [
           {
-            "name": "type",
+            "name": "cardAlignment",
             "description": "",
             "args": [],
             "type": {
@@ -161,7 +231,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ComponentType",
+                "name": "Alignment",
                 "ofType": null
               }
             },
@@ -176,20 +246,20 @@
       },
       {
         "kind": "ENUM",
-        "name": "ComponentType",
+        "name": "Alignment",
         "description": "",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
-            "name": "TEXT",
+            "name": "Vertical",
             "description": "",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "HEADING",
+            "name": "Horizontal",
             "description": "",
             "isDeprecated": false,
             "deprecationReason": null
@@ -198,9 +268,56 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "TextProperties",
+        "description": "",
+        "fields": [
+          {
+            "name": "textHeader",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "textSubheader",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "collapsible",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "SCALAR",
-        "name": "ID",
-        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "name": "Boolean",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -208,12 +325,36 @@
         "possibleTypes": null
       },
       {
-        "kind": "INTERFACE",
-        "name": "Node",
+        "kind": "OBJECT",
+        "name": "TickerProperties",
         "description": "",
         "fields": [
           {
-            "name": "id",
+            "name": "tickerLabel",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "tickerText",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "frequency",
             "description": "",
             "args": [],
             "type": {
@@ -221,49 +362,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Mutation",
-        "description": "",
-        "fields": [
-          {
-            "name": "createPage",
-            "description": "",
-            "args": [
-              {
-                "name": "input",
-                "description": "",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "NewPage",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Page",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -277,28 +376,113 @@
         "possibleTypes": null
       },
       {
-        "kind": "INPUT_OBJECT",
-        "name": "NewPage",
-        "description": "",
+        "kind": "SCALAR",
+        "name": "Int",
+        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
         "fields": null,
-        "inputFields": [
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ButtonProperties",
+        "description": "",
+        "fields": [
           {
-            "name": "id",
+            "name": "buttonText",
             "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "buttonLabel",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FormInputProperties",
+        "description": "",
+        "fields": [
+          {
+            "name": "inputType",
+            "description": "",
+            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "PageType",
+                "name": "InputType",
                 "ofType": null
               }
             },
-            "defaultValue": null
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "InputType",
+        "description": "",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "Text",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
           },
           {
-            "name": "components",
+            "name": "Number",
             "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FormDropDownProperties",
+        "description": "",
+        "fields": [
+          {
+            "name": "options",
+            "description": "",
+            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -309,17 +493,92 @@
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "ComponentType",
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 }
               }
             },
-            "defaultValue": null
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
-        "interfaces": null,
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FormSubmitProperties",
+        "description": "",
+        "fields": [
+          {
+            "name": "submitLabel",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "FormProperties",
+        "description": "",
+        "fields": [
+          {
+            "name": "formName",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "TableProperties",
+        "description": "",
+        "fields": [
+          {
+            "name": "tableName",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -664,26 +923,6 @@
             "deprecationReason": null
           }
         ],
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "String",
-        "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Boolean",
-        "description": "The `Boolean` scalar type represents `true` or `false`.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
         "possibleTypes": null
       },
       {
@@ -1141,38 +1380,18 @@
       },
       {
         "kind": "SCALAR",
-        "name": "_FieldSet",
-        "description": "",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "_Any",
-        "description": "",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Int",
-        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
         "name": "Float",
         "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "ID",
+        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -1182,56 +1401,6 @@
     ],
     "directives": [
       {
-        "name": "deprecated",
-        "description": "The @deprecated directive is used within the type system definition language to indicate deprecated portions of a GraphQL service’s schema, such as deprecated fields on a type or deprecated enum values.",
-        "locations": [
-          "FIELD_DEFINITION",
-          "ENUM_VALUE"
-        ],
-        "args": []
-      },
-      {
-        "name": "external",
-        "description": "",
-        "locations": [
-          "FIELD_DEFINITION"
-        ],
-        "args": []
-      },
-      {
-        "name": "requires",
-        "description": "",
-        "locations": [
-          "FIELD_DEFINITION"
-        ],
-        "args": []
-      },
-      {
-        "name": "provides",
-        "description": "",
-        "locations": [
-          "FIELD_DEFINITION"
-        ],
-        "args": []
-      },
-      {
-        "name": "key",
-        "description": "",
-        "locations": [
-          "OBJECT",
-          "INTERFACE"
-        ],
-        "args": []
-      },
-      {
-        "name": "extends",
-        "description": "",
-        "locations": [
-          "OBJECT"
-        ],
-        "args": []
-      },
-      {
         "name": "include",
         "description": "The @include directive may be provided for fields, fragment spreads, and inline fragments, and allows for conditional inclusion during execution as described by the if argument.",
         "locations": [
@@ -1239,7 +1408,22 @@
           "FRAGMENT_SPREAD",
           "INLINE_FRAGMENT"
         ],
-        "args": []
+        "args": [
+          {
+            "name": "if",
+            "description": "",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }
+        ]
       },
       {
         "name": "skip",
@@ -1249,7 +1433,42 @@
           "FRAGMENT_SPREAD",
           "INLINE_FRAGMENT"
         ],
-        "args": []
+        "args": [
+          {
+            "name": "if",
+            "description": "",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }
+        ]
+      },
+      {
+        "name": "deprecated",
+        "description": "The @deprecated directive is used within the type system definition language to indicate deprecated portions of a GraphQL service’s schema, such as deprecated fields on a type or deprecated enum values.",
+        "locations": [
+          "FIELD_DEFINITION",
+          "ENUM_VALUE"
+        ],
+        "args": [
+          {
+            "name": "reason",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": "\"No longer supported\""
+          }
+        ]
       }
     ]
   }

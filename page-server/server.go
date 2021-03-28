@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/ChicK00o/rn-server-driven-ui/page-server/graph"
 	"github.com/ChicK00o/rn-server-driven-ui/page-server/graph/generated"
+	"github.com/ChicK00o/rn-server-driven-ui/page-server/graph/model"
 )
 
 const defaultPort = "3000"
@@ -19,10 +22,26 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	file, err := ioutil.ReadFile("./test-page.json")
+	if err != nil {
+		panic(err)
+	}
 
-	http.Handle("/", setCORSHeaders(playground.Handler("GraphQL playground", "/query")))
-	http.Handle("/query", srv)
+	data := model.Component{}
+	err = json.Unmarshal([]byte(file), &data)
+	if err != nil {
+		panic(err)
+	}
+
+	allPages := make([]*model.Component, 0)
+	allPages = append(allPages, &data)
+
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
+		Pages: allPages,
+	}}))
+
+	http.Handle("/", setCORSHeaders(playground.Handler("GraphQL playground", "/graphql")))
+	http.Handle("/graphql", setCORSHeaders(srv.ServeHTTP))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
