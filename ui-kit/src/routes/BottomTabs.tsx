@@ -7,6 +7,7 @@ import { Settings } from 'src/screens/Settings';
 import { sleep } from '../utils/async';
 import { useThemeSystem } from 'src/contexts/ThemeContext';
 import { Icon } from 'react-native-eva-icons';
+import { TestPage } from 'src/screens/TestPage';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,6 +51,22 @@ export const BottomTabs = () => {
           tabBarIcon: ({ focused, color, size }) => (
             <Icon
               name="settings-outline"
+              width={size}
+              height={size}
+              fill={focused ? theme.palette.onBackgroundTint : color}
+            />
+          ),
+        }}
+      />
+      
+      <Tab.Screen
+        name="TestPage"
+        component={TestPage}
+        options={{
+          tabBarLabel: t('test-page'),
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon
+              name="bulb-outline"
               width={size}
               height={size}
               fill={focused ? theme.palette.onBackgroundTint : color}

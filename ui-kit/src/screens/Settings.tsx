@@ -1,9 +1,6 @@
-import { useQuery } from '@apollo/client';
 import React from 'react';
 import { Button, Platform, View, Text, StyleSheet } from 'react-native';
 import { useThemeSystem } from 'src/contexts/ThemeContext';
-import { GET_PAGE } from 'src/gql/page.gql';
-import { GetPageByName, GetPageByNameVariables } from 'src/gql/types/GetPageByName';
 import { useI18n } from 'src/i18n/hooks';
 
 const styles = StyleSheet.create({
@@ -28,9 +25,6 @@ const styles = StyleSheet.create({
 export const Settings = () => {
   const { t, changeLanguage } = useI18n();
   const { theme, toggleTheme } = useThemeSystem();
-  const { data, loading, error } = useQuery<GetPageByName, GetPageByNameVariables>(GET_PAGE, {
-    variables: { name: "PageType.PAGE2" },
-  });
 
   const platform = Platform.select({
     ios: t('home.text.platform.ios'),
@@ -57,11 +51,6 @@ export const Settings = () => {
         aria-level="2">
         {platform}
       </Text>
-      {loading ? (
-        <Text>Loading....</Text>
-      ) : (
-        <Text>{'Data : ' + JSON.stringify(data) + ' || Error : ' + JSON.stringify(error)}</Text>
-      )}
     </View>
   );
 };
