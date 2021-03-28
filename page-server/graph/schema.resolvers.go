@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"time"
 
 	"github.com/ChicK00o/rn-server-driven-ui/page-server/graph/generated"
 	"github.com/ChicK00o/rn-server-driven-ui/page-server/graph/model"
@@ -14,6 +15,7 @@ func (r *queryResolver) GetPage(ctx context.Context, pageName *string) (*model.C
 	if pageName != nil {
 		//selecting page
 	}
+	time.Sleep(3 * time.Second)
 	return r.Pages[0], nil
 }
 

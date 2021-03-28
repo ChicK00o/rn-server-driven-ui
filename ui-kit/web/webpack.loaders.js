@@ -16,7 +16,8 @@ const babelLoader = {
     path.resolve(appDirectory, 'node_modules/react-native-vector-icons'),
     path.resolve(appDirectory, 'node_modules/react-native-flipper'),
     path.resolve(appDirectory, 'node_modules/rn-async-storage-flipper'),
-    path.resolve(appDirectory, 'node_modules/reactotron-react-native')
+    path.resolve(appDirectory, 'node_modules/reactotron-react-native'),
+    path.resolve(appDirectory, 'node_modules/@brainly/use-suspense-query')
   ],
   use: {
     loader: 'babel-loader',
