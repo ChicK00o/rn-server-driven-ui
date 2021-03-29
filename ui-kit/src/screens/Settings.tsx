@@ -1,30 +1,10 @@
 import React from 'react';
-import { Button, Platform, View, Text, StyleSheet } from 'react-native';
-import { useThemeSystem } from 'src/contexts/ThemeContext';
+import { Platform } from 'react-native';
+import { Button, View, Text } from 'native-base';
 import { useI18n } from 'src/i18n/hooks';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  theme: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  languages: {
-    marginBottom: 20,
-  },
-  footer: {
-    marginTop: 40,
-  },
-});
 
 export const Settings = () => {
   const { t, changeLanguage } = useI18n();
-  const { theme, toggleTheme } = useThemeSystem();
 
   const platform = Platform.select({
     ios: t('home.text.platform.ios'),
@@ -33,20 +13,18 @@ export const Settings = () => {
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.palette.background }]}>
-      <View style={styles.theme}>
-        <Text style={{ color: theme.palette.onBackground }}>Theme: </Text>
+    <View>
+      <View>
+        <Text>Theme: </Text>
         <Button
-          onPress={toggleTheme}
-          title={theme.paletteName === 'light' ? t('Light') : t('Dark')}
+          title={'light' === 'light' ? t('Light') : t('Dark')}
         />
       </View>
-      <View style={styles.languages}>
+      <View>
         <Button onPress={() => changeLanguage('en')} title={t('english')} />
         <Button onPress={() => changeLanguage('vi')} title={t('vietnamese')} />
       </View>
       <Text
-        style={[styles.footer, { color: theme.palette.onBackground }]}
         accessibilityRole="header"
         aria-level="2">
         {platform}

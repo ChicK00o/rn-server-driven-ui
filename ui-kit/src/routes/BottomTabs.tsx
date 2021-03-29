@@ -5,7 +5,6 @@ import RNBootSplash from 'react-native-bootsplash';
 import { Home } from 'src/screens/Home';
 import { Settings } from 'src/screens/Settings';
 import { sleep } from '../utils/async';
-import { useThemeSystem } from 'src/contexts/ThemeContext';
 import { Icon } from 'react-native-eva-icons';
 import { TestPage } from 'src/screens/TestPage';
 
@@ -13,7 +12,6 @@ const Tab = createBottomTabNavigator();
 
 export const BottomTabs = () => {
   const { t } = useTranslation();
-  const { theme } = useThemeSystem();
 
   const init = async () => {
     await sleep(1000);
@@ -32,12 +30,12 @@ export const BottomTabs = () => {
         component={Home}
         options={{
           tabBarLabel: t('home'),
-          tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: ({ color, size }) => (
             <Icon
               name="home-outline"
               width={size}
               height={size}
-              fill={focused ? theme.palette.onBackgroundTint : color}
+              fill={color}
             />
           ),
         }}
@@ -48,12 +46,12 @@ export const BottomTabs = () => {
         component={Settings}
         options={{
           tabBarLabel: t('settings'),
-          tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: ({ color, size }) => (
             <Icon
               name="settings-outline"
               width={size}
               height={size}
-              fill={focused ? theme.palette.onBackgroundTint : color}
+              fill={color}
             />
           ),
         }}
@@ -64,12 +62,12 @@ export const BottomTabs = () => {
         component={TestPage}
         options={{
           tabBarLabel: t('test-page'),
-          tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: ({ color, size }) => (
             <Icon
               name="bulb-outline"
               width={size}
               height={size}
-              fill={focused ? theme.palette.onBackgroundTint : color}
+              fill={color}
             />
           ),
         }}

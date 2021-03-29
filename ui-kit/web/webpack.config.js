@@ -10,6 +10,7 @@ const {
   imageFilesLoader,
   fontsLoader,
   imageBase64Loader,
+  cssLoader,
 } = require('./webpack.loaders.js');
 
 const __DEV__ = process.env.STAGE !== 'production';
@@ -50,6 +51,7 @@ module.exports = {
       imageFilesLoader,
       fontsLoader,
       imageBase64Loader,
+      cssLoader,
     ]
   },
 
@@ -58,7 +60,9 @@ module.exports = {
     alias: {
       'react-native$': 'react-native-web',
       'i18next-react-native-async-storage$': 'i18next-browser-languagedetector',
-      'react-native-feather': 'react-feather'
+      'react-native-feather': 'react-feather',
+      //adding this for the native base web compilation with expo
+      '@expo/vector-icons': 'react-native-vector-icons',
     },
 
     /**
@@ -105,6 +109,11 @@ module.exports = {
     // Use this to define global variable (for process.env, use EnvironmentPlugin)
     new webpack.DefinePlugin({
       __DEV__: JSON.stringify(__DEV__),
+    }),
+
+    //adding this for native-module compilation
+    new webpack.EnvironmentPlugin({
+      APP_MANIFEST: null,
     }),
 
     // Show bundle Analyzer

@@ -16,6 +16,7 @@ module.exports = {
         extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
         alias: {
           src: './src',
+          // '@expo/vector-icons': 'react-native-vector-icons',
         },
       },
     ],

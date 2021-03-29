@@ -17,16 +17,17 @@ const babelLoader = {
     path.resolve(appDirectory, 'node_modules/react-native-flipper'),
     path.resolve(appDirectory, 'node_modules/rn-async-storage-flipper'),
     path.resolve(appDirectory, 'node_modules/reactotron-react-native'),
-    path.resolve(appDirectory, 'node_modules/@brainly/use-suspense-query')
+    path.resolve(appDirectory, 'node_modules/@react-native-picker'),
+    path.resolve(appDirectory, 'node_modules/react-native-web'),
+    path.resolve(appDirectory, 'node_modules/native-base'),
+    path.resolve(appDirectory, 'node_modules/react-native-bootsplash'),
   ],
   use: {
     loader: 'babel-loader',
     options: {
       cacheDirectory: true,
       // Keep babel web plugins here so that it doesn't interfere with the app
-      plugins: [
-        'react-native-web'
-      ],
+      plugins: ['react-native-web'],
     },
   },
 };
@@ -51,8 +52,8 @@ const imageBase64Loader = {
       options: {
         limit: 8192,
       },
-    }
-  }
+    },
+  },
 };
 
 /**
@@ -60,13 +61,27 @@ const imageBase64Loader = {
  **/
 const fontsLoader = {
   test: /\.(ttf|otf)$/,
-  loader: "url-loader",
+  loader: 'url-loader',
   include: [
     path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
     path.resolve(__dirname, 'app/assets/fonts'),
-  ]
+  ],
 };
 
+const cssLoader = {
+  test: /\.(sass|less|css)$/,
+  use: [
+    'style-loader',
+    'css-loader',
+    {
+      loader: 'postcss-loader',
+      options: {
+        plugins: () => [require('autoprefixer')()],
+      },
+    },
+    'sass-loader',
+  ],
+};
 
 module.exports = {
   appDirectory,
@@ -74,4 +89,5 @@ module.exports = {
   imageFilesLoader,
   fontsLoader,
   imageBase64Loader,
+  cssLoader,
 };

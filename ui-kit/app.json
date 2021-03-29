@@ -1,4 +1,12 @@
 {
   "name": "ui-kit",
-  "displayName": "ui-kit"
+  "displayName": "ui-kit",
+  "expo": {
+    "name": "ui-kit",
+    "slug": "ui-kit",
+    "version": "0.0.1",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
 }

@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react-native';
 import React from 'react';
-import { ThemeProvider } from '../contexts/ThemeContext';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { TestPage } from './TestPage';
 
@@ -13,9 +12,7 @@ describe('TestPage', () => {
   jest.useFakeTimers();
   const pageTree = (
     <ApolloProvider client={client}>
-      <ThemeProvider>
         <TestPage/>
-      </ThemeProvider>
     </ApolloProvider>
   );
 
