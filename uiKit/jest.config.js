@@ -2,6 +2,7 @@ module.exports = {
   preset: 'react-native',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '@expo/vector-icons': 'react-native-vector-icons',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testRegex: '(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$',
@@ -16,5 +17,5 @@ module.exports = {
   clearMocks: true,
   setupFilesAfterEnv: ['./jest.setup.js'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!**/node_modules/**'],
-  coverageDirectory: '.coverage'
+  coverageDirectory: '.coverage',
 };

@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native';
 import React from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { TestPage } from './TestPage';
+import { NativeBaseProvider } from 'native-base';
 
 const client = new ApolloClient({
   uri: 'http://localhost:3000/graphql',
@@ -12,7 +13,9 @@ describe('TestPage', () => {
   jest.useFakeTimers();
   const pageTree = (
     <ApolloProvider client={client}>
-        <TestPage/>
+      <NativeBaseProvider>
+        <TestPage />
+      </NativeBaseProvider>
     </ApolloProvider>
   );
 
