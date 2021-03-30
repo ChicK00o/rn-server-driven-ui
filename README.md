@@ -7,7 +7,7 @@ experiments on server driven ui for react native
 page-server
 : this is the service that exposes graphql and will be responsible for pushing the information to render pages on the app
 
-ui-kit
+uiKit
 : this project will hold the client that is powered by the backend, its bootstrapped using [rn-starter](https://github.com/turbothinh/react-native-cross-platform-starter). its a project that supports ios, android and web.
 
 ## constraints
