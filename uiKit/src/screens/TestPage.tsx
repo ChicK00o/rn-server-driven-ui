@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import React from 'react';
-import { ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native-paper';
 import { GET_PAGE } from 'src/gql/page.gql';
 import { GetPageByName, GetPageByNameVariables } from 'src/gql/types/GetPageByName';
 

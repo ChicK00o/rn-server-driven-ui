@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useThemeSystem } from 'src/contexts/ThemeContext';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import {Text} from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,12 +14,11 @@ const styles = StyleSheet.create({
 
 export const Home = () => {
   const { t } = useTranslation();
-  const { theme } = useThemeSystem();
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.palette.background }]}>
+    <View style={styles.container}>
       <Text
-        style={[styles.text, { color: theme.palette.onBackground }]}
+        style={styles.text}
         accessibilityRole="header"
         aria-level="2"
       >
