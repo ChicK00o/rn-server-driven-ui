@@ -17,7 +17,7 @@ export const TestPage = () => {
       ) : (
         <>
         <Text>{'Data : ' + JSON.stringify(data) + ' || Error : ' + JSON.stringify(error)}</Text>
-        <Button>this is test</Button>
+        <Button colorScheme="emerald">this is test</Button>
         </>
       )}
     </>

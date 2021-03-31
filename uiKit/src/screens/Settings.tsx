@@ -16,17 +16,17 @@ export const Settings = () => {
     <View>
       <View>
         <Text>Theme: </Text>
-        <Button
-          title={'light' === 'light' ? t('Light') : t('Dark')}
-        />
+        <Button colorScheme="emerald"> {'light' === 'light' ? t('Light') : t('Dark')} </Button>
       </View>
       <View>
-        <Button onPress={() => changeLanguage('en')} title={t('english')} />
-        <Button onPress={() => changeLanguage('vi')} title={t('vietnamese')} />
+        <Button colorScheme="emerald" onPress={() => changeLanguage('en')}>
+          {t('english')}
+        </Button>
+        <Button colorScheme="emerald" onPress={() => changeLanguage('vi')}>
+          {t('vietnamese')}
+        </Button>
       </View>
-      <Text
-        accessibilityRole="header"
-        aria-level="2">
+      <Text accessibilityRole="header" aria-level="2">
         {platform}
       </Text>
     </View>
